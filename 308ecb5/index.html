@@ -1,0 +1,403 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>如何制作物品随机附魔 | GSWXY</title><meta name="keywords" content="魔兽数据库,AzerothCore,AC源码,随机附魔,魔兽单机"><meta name="author" content="GSWXY"><meta name="copyright" content="GSWXY"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="详细介绍如何通过数据库和DBC制作随机附魔">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何制作物品随机附魔">
+<meta property="og:url" content="https://www.gswxy.com/308ecb5/index.html">
+<meta property="og:site_name" content="GSWXY">
+<meta property="og:description" content="详细介绍如何通过数据库和DBC制作随机附魔">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.gswxy.com/308ecb5/cover.jpg">
+<meta property="article:published_time" content="2021-09-14T11:24:49.000Z">
+<meta property="article:modified_time" content="2021-09-14T12:24:49.000Z">
+<meta property="article:author" content="GSWXY">
+<meta property="article:tag" content="魔兽数据库&amp;DBC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.gswxy.com/308ecb5/cover.jpg"><link rel="shortcut icon" href="/imgs/favicon.jpg"><link rel="canonical" href="https://www.gswxy.com/308ecb5/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?c4c2253f01ae0fc7bd2535b4e2a2c4c8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-8ES6QNBGGR"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8ES6QNBGGR');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":300,"languages":{"author":"作者: GSWXY","link":"链接: ","source":"来源: GSWXY","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '如何制作物品随机附魔',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-09-14 20:24:49'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-swiper/swiper/swiper.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-swiper/swiper/swiperstyle.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.1"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/imgs/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://chat.gswxy.com"><i class="fa-fw fas fa-comments"></i><span> 聊天</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-award"></i><span> 关于</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heartbeat"></i><span> 我们</span></a></li><li><a class="site-page child" target="_blank" rel="noopener external nofollow noreferrer" href="http://book.gswxy.com"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-trophy"></i><span> 游戏</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">GSWXY</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://chat.gswxy.com"><i class="fa-fw fas fa-comments"></i><span> 聊天</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-award"></i><span> 关于</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heartbeat"></i><span> 我们</span></a></li><li><a class="site-page child" target="_blank" rel="noopener external nofollow noreferrer" href="http://book.gswxy.com"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-trophy"></i><span> 游戏</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">如何制作物品随机附魔</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-14T11:24:49.000Z" title="发表于 2021-09-14 19:24:49">2021-09-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-09-14T12:24:49.000Z" title="更新于 2021-09-14 20:24:49">2021-09-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AD%94%E5%85%BD%E6%8A%80%E6%9C%AF/">魔兽技术</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AD%94%E5%85%BD%E6%8A%80%E6%9C%AF/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8CDBC/">数据库和DBC</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="如何制作物品随机附魔"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>制作随机附魔这种教程已经烂大街了，网上随便一搜就有，随机附魔实现的方法有<code>MOD</code>、<code>数据库和DBC</code>，以及<code>Eluna</code>三种方式，本文大量参考网络文章（尤其是参考<code>法号蓝灯</code>，论坛账号<code>wen23t</code>的文章），我这边就拾人牙慧，尽可能的较为详细、较为清晰的介绍下<code>数据库和DBC</code>方式吧！</p>
+<p>本文所需的工具为：</p>
+<ul>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.navicat.com.cn/download/navicat-premium">Navicat</a>，连接数据库用；</li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://pan.baidu.com/s/1aVnSn5M0PsbZboSWSEfQGA">MPQEditor</a>（提取码：3q32），制作客户端补丁用；</li>
+<li><a target="_blank" rel="noopener external nofollow noreferrer" href="https://pan.baidu.com/s/1cLzJJyLi9K8MHgzjxjXg4g">MyDbcEditor</a>（提取码：qqi2）或<a target="_blank" rel="noopener external nofollow noreferrer" href="https://pan.baidu.com/s/1-SHBNmeEhrDDHY9BLJXYdg">WDBX Editor</a>工具（提取码：qkn1），编辑dbc文件用。</li>
+</ul>
+<h1 id="原理介绍"><a href="#原理介绍" class="headerlink" title="原理介绍"></a>原理介绍</h1><p><img src="1.png"></p>
+<p>如图所示，简单说下逻辑关系：</p>
+<ol>
+<li><code>item_template</code>表对应<code>item_enchantment_template</code>表数值；</li>
+<li><code>item_enchantment_template</code>表对应<code>ItemRandomProperties.dbc</code>或者<code>ItemRandomSuffix.dbc</code>文件数值；</li>
+<li><code>ItemRandomProperties.dbc</code>或者<code>ItemRandomSuffix.dbc</code>文件对应<code>SpellItemEnchantment.dbc</code>文件数值；</li>
+<li><code>SpellItemEnchantment.dbc</code>文件分别对应<code>Spell.dbc</code>、<code>ItemVisuals.dbc</code>和<code>SkillLine.dbc</code>文件数值。</li>
+</ol>
+<p>有点复杂，上图我分了五个层次，我将分别介绍：</p>
+<h2 id="第一层"><a href="#第一层" class="headerlink" title="第一层"></a>第一层</h2><p>在<code>item_template</code>表内，有两种随机附魔方式，分别是：</p>
+<ol>
+<li>固定数值的随机附魔：<code>RandomPropery</code></li>
+<li>动态数值的随机附魔：<code>Randomsuffix</code></li>
+</ol>
+<p>两者只能选择其一，即在<code>RandomPropery</code>如果有了数字，<code>Randomsuffix</code>里就不要填写。这里所填的数字即随机附魔的编号，对应<code>item_enchantment_template</code>表内的<code>Entry</code>值。</p>
+<h2 id="第二层"><a href="#第二层" class="headerlink" title="第二层"></a>第二层</h2><p><img src="2.png"></p>
+<p>如图所示，<code>item_enchantment_template</code>表内的<code>Entry</code>为随机附魔的编号，<code>item_enchantment_template</code>表内的<code>Ench</code>填写dbc文件中的词缀ID，<code>chance</code>为该随机附魔出现的概率，需要说明的是：</p>
+<ul>
+<li>如果你选择了<code>RandomPropery</code>，则<code>Ench</code>的值你需要填写的是<code>ItemRandomProperties.dbc</code>文件中的词缀ID；</li>
+<li>如果你选择了<code>Randomsuffix</code>，则<code>Ench</code>的值你需要填写的是<code>ItemRandomSuffix.dbc</code>文件中的词缀ID;</li>
+<li><code>Entry</code>不唯一，可以是多个，但同一个<code>Entry</code>的<code>chance</code>的数值之和必须等于<code>100</code>。</li>
+</ul>
+<h2 id="第三层"><a href="#第三层" class="headerlink" title="第三层"></a>第三层</h2><h3 id="ItemRandomProperties-dbc"><a href="#ItemRandomProperties-dbc" class="headerlink" title="ItemRandomProperties.dbc"></a>ItemRandomProperties.dbc</h3><p>对应<code>RandomPropery</code>，我们需要查看的是<code>ItemRandomProperties.dbc</code>文件，请使用MyDbcEditor打开：</p>
+<p><img src="3.png"></p>
+<ol>
+<li>即词缀ID，也就是上文所说<code>item_enchantment_template</code>表内的<code>Ench</code>所要填写的数值；</li>
+<li>即附魔效果编号，也就是说我一个词缀最多可以有三种附魔效果。</li>
+</ol>
+<h3 id="ItemRandomSuffix-dbc"><a href="#ItemRandomSuffix-dbc" class="headerlink" title="ItemRandomSuffix.dbc"></a>ItemRandomSuffix.dbc</h3><p>对应<code>Randomsuffix</code>，我们需要查看的是<code>ItemRandomSuffix.dbc</code>文件，请使用MyDbcEditor打开：</p>
+<p><img src="4.png"></p>
+<ol>
+<li>即词缀ID，也就是上文所说<code>item_enchantment_template</code>表内的<code>Ench</code>所要填写的数值；</li>
+<li>即附魔效果编号，也就是说我一个词缀最多可以有三种附魔效果；</li>
+<li>即倍率控制，第25列控制20列的附魔效果倍率，第26列控制21列的附魔效果倍率，第27列控制22列的附魔效果倍率。</li>
+</ol>
+<h4 id="RandPropPoints-dbc"><a href="#RandPropPoints-dbc" class="headerlink" title="RandPropPoints.dbc"></a>RandPropPoints.dbc</h4><p>这里重点说下倍率控制，当下文第四层的<code>SpellItemEnchantment.dbc</code>文件内第<code>3-5</code>列的某数值为5（即表示为属性点数），并且其对应最小值为<code>0x6</code>时，会指向<code>RandPropPoints.dbc</code>文件中的索引值：</p>
+<p><img src="5.png"></p>
+<ol>
+<li>即装备等级；</li>
+<li>即史诗装备；</li>
+<li>即精良装备；</li>
+<li>即优秀装备。</li>
+</ol>
+<p>其中史诗、精良、优秀装备每栏对应装备类型为：</p>
+<table>
+<thead>
+<tr>
+<th align="center">栏数</th>
+<th align="center">对应的装备类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">第2、7和12栏</td>
+<td align="center">头部 衬衣 胸部 腿部 双手武器 长袍</td>
+</tr>
+<tr>
+<td align="center">第3、8和13栏</td>
+<td align="center">肩膀 腰带 脚部 手套 饰品</td>
+</tr>
+<tr>
+<td align="center">第4、9和14栏</td>
+<td align="center">脖子 护腕 戒指 盾牌 披风</td>
+</tr>
+<tr>
+<td align="center">第5、10和15栏</td>
+<td align="center">单手武器 主手武器 副手武器</td>
+</tr>
+<tr>
+<td align="center">第6、11和16栏</td>
+<td align="center">弓箭 投掷武器 远程武器</td>
+</tr>
+</tbody></table>
+<p>以装备等级为300的装备举例，假如我们有一件紫色头部装备，那么他参考的是2-6列中第2列的索引值：431，假设我们给他的附魔效果倍率是10000，那么这件装备附魔属性值=10000（倍率）×431（索引值）÷10000，这件装备附魔属性值就是431，如果倍率是20000，那么就是：862。</p>
+<p>这两个dbc的意义在于可以精细控制不同装等、不同颜色、不同类型装备的附魔属性值。</p>
+<h2 id="第四层"><a href="#第四层" class="headerlink" title="第四层"></a>第四层</h2><p>以上<code>ItemRandomProperties.dbc</code>和<code>ItemRandomSuffix.dbc</code>文件的附魔效果编号均指向<code>SpellItemEnchantment.dbc</code>文件，请使用MyDbcEditor打开该文件：</p>
+<table>
+<thead>
+<tr>
+<th align="center">列数</th>
+<th align="center">说明</th>
+<th align="center">详细解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">1</td>
+<td align="center">编号</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td align="center">费用</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">3-5</td>
+<td align="center">类型</td>
+<td align="center">1=法术伤害；2=物理伤害；3=混合（武器、全属性、钓鱼等）；4=护甲；5=属性点数；6=石化（嘲讽）</td>
+</tr>
+<tr>
+<td align="center">6-8</td>
+<td align="center">附魔最小值</td>
+<td align="center">可控1、2、4类型的数值，不可控3、5、6类型的数值</td>
+</tr>
+<tr>
+<td align="center">9-11</td>
+<td align="center">附魔最大值</td>
+<td align="center">可控1、2、4类型的数值，不可控3、5、6类型的数值</td>
+</tr>
+<tr>
+<td align="center">12-14</td>
+<td align="center">Spell技能（id）</td>
+<td align="center">若数值为5，则代表状态，否则参考<code>spell.dbc</code>技能ID</td>
+</tr>
+<tr>
+<td align="center">19</td>
+<td align="center">附魔效果描述</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">31</td>
+<td align="center">描述标识</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">32</td>
+<td align="center">光环</td>
+<td align="center">参考<code>ItemVisuals.dbc</code></td>
+</tr>
+<tr>
+<td align="center">33</td>
+<td align="center">攻击范围</td>
+<td align="center">参考<code>SpellRange.dbc </code></td>
+</tr>
+<tr>
+<td align="center">34</td>
+<td align="center">珠宝编号</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">35</td>
+<td align="center">附魔条件</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">36</td>
+<td align="center">需要技能</td>
+<td align="center">参考<code>SkillLine.dbc</code></td>
+</tr>
+<tr>
+<td align="center">37</td>
+<td align="center">需要技能等级</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">38</td>
+<td align="center">需要等级</td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>注意：DBC文件里面有的列中的值是以”0x”开头的，那表示这是16进制的数，碰到这种数字，就需要用计算器转化成十进制（”0x”只是一个16进制的标识，不要改动）</p>
+</blockquote>
+<h2 id="第五层"><a href="#第五层" class="headerlink" title="第五层"></a>第五层</h2><p>这里的<code>Spell.dbc</code>、<code>ItemVisuals.dbc</code>、<code>SpellRange.dbc</code>和<code>SkillLine.dbc</code>文件我就不详细说了，因为太多太多了，后面我会分别单独出文章来介绍。</p>
+<h1 id="操作实践"><a href="#操作实践" class="headerlink" title="操作实践"></a>操作实践</h1><p>比如我想某件装备有一定几率附魔遗产技能：</p>
+<h2 id="第五层作业"><a href="#第五层作业" class="headerlink" title="第五层作业"></a>第五层作业</h2><ol>
+<li>首先在<code>Spell.dbc</code>里面加入遗产技能，打开WDBX Editor工具，按<code>Ctrl+O</code>，选择<code>Spell.dbc</code>文件，选择<code>WotLK 3.3.5（12340）</code>选项，点<code>Load</code>；</li>
+<li>打开后选择菜单栏的<code>Import</code>选项，点<code>From CSV</code>，选择下载的<a target="_blank" rel="noopener external nofollow noreferrer" href="https://pan.baidu.com/s/1QtuD7PCMRdZxtI9LzZXt2w">Spell.csv</a>文件（提取码：pm4m），点<code>Load</code>导入遗产技能，导入后按<code>Ctrl+S</code>保存文件。</li>
+</ol>
+<h2 id="第四层作业"><a href="#第四层作业" class="headerlink" title="第四层作业"></a>第四层作业</h2><ol>
+<li>打开WDBX Editor工具，按<code>Ctrl+O</code>，选择<code>SpellItemEnchantment.dbc</code>文件，选择<code>WotLK 3.3.5（12340）</code>选项，点<code>Load</code>；</li>
+<li>打开后选择菜单栏的<code>Import</code>选项，点<code>From CSV</code>，选择下载的<a target="_blank" rel="noopener external nofollow noreferrer" href="https://pan.baidu.com/s/1vJqdtzWNgeO8Nk9p5P8hRQ">SpellItemEnchantment.csv</a>文件（提取码：ejbf），点<code>Load</code>导入，导入后按<code>Ctrl+S</code>保存文件。</li>
+</ol>
+<p>在这里如果你源码功能里有<a target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/azerothcore/mod-random-enchants"> mod-random-enchants</a>，做到这里就完事了，如果你没有，继续下一步：</p>
+<h2 id="第三层作业"><a href="#第三层作业" class="headerlink" title="第三层作业"></a>第三层作业</h2><p>打开WDBX Editor工具，按<code>Ctrl+O</code>，选择<code>ItemRandomProperties.dbc</code>文件，选择<code>WotLK 3.3.5（12340）</code>选项，点<code>Load</code>；</p>
+<p>打开后选择菜单栏的<code>Import</code>选项，点<code>From CSV</code>，选择下载的<a target="_blank" rel="noopener external nofollow noreferrer" href="https://pan.baidu.com/s/1kCwEsieI8U5QOWJ8XQdciA">ItemRandomProperties.csv</a>文件（提取码：zlmh），点<code>Load</code>导入，导入后按<code>Ctrl+S</code>保存文件。</p>
+<h2 id="第二层作业"><a href="#第二层作业" class="headerlink" title="第二层作业"></a>第二层作业</h2><p>打开Navicat工具，打开<code>acore_world</code>数据库里的<code>item_enchantment_template</code>表，点导入，导入类型选<code>CSV文件</code>，选择下载的<a target="_blank" rel="noopener external nofollow noreferrer" href="https://pan.baidu.com/s/1we_fKpdjitFFZ0hUHDTPlA">item_enchantment_template.csv</a>文件（提取码：b1ao），一路点下一步导入。</p>
+<h2 id="第一层作业"><a href="#第一层作业" class="headerlink" title="第一层作业"></a>第一层作业</h2><p>这里我以<code>破损的短剑</code>为例，打开<code>acore_world</code>数据库里的<code>item_template</code>表，找到<code>entry</code>为<code>25</code>的<code>破损的短剑</code>物品，在<code>RandomPropery</code>栏里输入<code>10000</code>。</p>
+<h2 id="制作补丁"><a href="#制作补丁" class="headerlink" title="制作补丁"></a>制作补丁</h2><h3 id="服务端补丁"><a href="#服务端补丁" class="headerlink" title="服务端补丁"></a>服务端补丁</h3><p>将你制作的<code>Spell.dbc</code>、<code>SpellItemEnchantment.dbc</code>、<code>ItemRandomProperties.dbc</code>三个文件上传到服务端的dbc文件夹，重启服务端即可生效。</p>
+<h3 id="客户端补丁"><a href="#客户端补丁" class="headerlink" title="客户端补丁"></a>客户端补丁</h3><p>新建<code>客户端补丁</code>文件夹，在其目录下再新建<code>DBFilesClient</code>文件夹，将你制作的<code>Spell.dbc</code>、<code>SpellItemEnchantment.dbc</code>、<code>ItemRandomProperties.dbc</code>三个文件放入其中；</p>
+<p>右键以管理员方式打开MPQEditor工具，点菜单栏<code>新建MPQ</code>，文件名输入<code>patch-zhCN-A.MPQ</code>，点<code>下一步</code>，点<code>从文件或者文件夹创建MPQ文档</code>，选择<code>客户端补丁</code>文件夹，一直下一步即可制作好客户端补丁；</p>
+<p>将<code>patch-zhCN-A.MPQ</code>放入<code>World of Warcraft\Data\zhCN</code>游戏目录，运行游戏查看效果：</p>
+<p><img src="6.png"></p>
+<p>测试服内我添加了所有物品掉落时，有一定几率附魔遗产技能，可以去体验下。</p>
+<h2 id="批量更改"><a href="#批量更改" class="headerlink" title="批量更改"></a>批量更改</h2><p>回到第一层，我这里是以一件装备作为演示，如果需要批量添加所有装备的随机附魔，则需要SQL语句，举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">UPDATE item_template SET RandomProperty = 10000 where randomsuffix = 0 and RandomProperty=0 and (class = 4 or class = 2) and Quality &gt; 1 and quality&lt;5 and (bonding = 1 or bonding = 2) and ItemLevel &gt; 30;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码的意思是：为<code>randomsuffix = 0</code>并且<code>RandomProperty=0</code>，并且物品种类为护甲或者武器，并且物品品质大于白色小于橙色，并且物品为装备绑定或拾取绑定，并且物品等级大于30的物品，进行10000附魔。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">GSWXY</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.gswxy.com/308ecb5/">https://www.gswxy.com/308ecb5/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.gswxy.com" target="_blank">GSWXY</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%AD%94%E5%85%BD%E6%95%B0%E6%8D%AE%E5%BA%93-DBC/">魔兽数据库&amp;DBC</a></div><div class="post_share"><div class="social-share" data-image="/308ecb5/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/imgs/wechat.png" target="_blank"><img class="post-qr-code-img" src="/imgs/wechat.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/imgs/alipay.png" target="_blank"><img class="post-qr-code-img" src="/imgs/alipay.png" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/32496ea0/"><img class="prev-cover" src="/32496ea0/cover.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Acore-world数据库之item-template表全面解释</div></div></a></div><div class="next-post pull-right"><a href="/9cc7e1be/"><img class="next-cover" src="/9cc7e1be/1.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">GSWXY-单机服务端Docker版</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/32496ea0/" title="Acore-world数据库之item-template表全面解释"><img class="cover" src="/32496ea0/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-15</div><div class="title">Acore-world数据库之item-template表全面解释</div></div></a></div><div><a href="/e2fc309a/" title="Acore_auth数据库全面解释"><img class="cover" src="/e2fc309a/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-08-25</div><div class="title">Acore_auth数据库全面解释</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/imgs/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">GSWXY</div><div class="author-info__description">分享我们一些喜欢的事情</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" href="https://www.gswxy.com/about/"><i class="fab fa-github"></i><span>About Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">本站不开放评论，如有疑问请加QQ群：938973736，或点击右上角菜单进入聊天室！另外强烈推荐服务器（https://www.w3dhost.com），稳定靠谱性价比高（联系QQ：158001）</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8E%9F%E7%90%86%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.</span> <span class="toc-text">原理介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82"><span class="toc-number">2.1.</span> <span class="toc-text">第一层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82"><span class="toc-number">2.2.</span> <span class="toc-text">第二层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82"><span class="toc-number">2.3.</span> <span class="toc-text">第三层</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ItemRandomProperties-dbc"><span class="toc-number">2.3.1.</span> <span class="toc-text">ItemRandomProperties.dbc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ItemRandomSuffix-dbc"><span class="toc-number">2.3.2.</span> <span class="toc-text">ItemRandomSuffix.dbc</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RandPropPoints-dbc"><span class="toc-number">2.3.2.1.</span> <span class="toc-text">RandPropPoints.dbc</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E5%B1%82"><span class="toc-number">2.4.</span> <span class="toc-text">第四层</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E5%B1%82"><span class="toc-number">2.5.</span> <span class="toc-text">第五层</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%AE%9E%E8%B7%B5"><span class="toc-number">3.</span> <span class="toc-text">操作实践</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%94%E5%B1%82%E4%BD%9C%E4%B8%9A"><span class="toc-number">3.1.</span> <span class="toc-text">第五层作业</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E5%9B%9B%E5%B1%82%E4%BD%9C%E4%B8%9A"><span class="toc-number">3.2.</span> <span class="toc-text">第四层作业</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E5%B1%82%E4%BD%9C%E4%B8%9A"><span class="toc-number">3.3.</span> <span class="toc-text">第三层作业</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%BA%8C%E5%B1%82%E4%BD%9C%E4%B8%9A"><span class="toc-number">3.4.</span> <span class="toc-text">第二层作业</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AC%AC%E4%B8%80%E5%B1%82%E4%BD%9C%E4%B8%9A"><span class="toc-number">3.5.</span> <span class="toc-text">第一层作业</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%B6%E4%BD%9C%E8%A1%A5%E4%B8%81"><span class="toc-number">3.6.</span> <span class="toc-text">制作补丁</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E8%A1%A5%E4%B8%81"><span class="toc-number">3.6.1.</span> <span class="toc-text">服务端补丁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%A1%A5%E4%B8%81"><span class="toc-number">3.6.2.</span> <span class="toc-text">客户端补丁</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%89%B9%E9%87%8F%E6%9B%B4%E6%94%B9"><span class="toc-number">3.7.</span> <span class="toc-text">批量更改</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/96a2fbae/" title="被遗忘者的哀歌"><img src="/96a2fbae/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="被遗忘者的哀歌"/></a><div class="content"><a class="title" href="/96a2fbae/" title="被遗忘者的哀歌">被遗忘者的哀歌</a><time datetime="2022-02-28T14:44:38.000Z" title="发表于 2022-02-28 22:44:38">2022-02-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/7ecb09b6/" title="二三事"><img src="/7ecb09b6/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="二三事"/></a><div class="content"><a class="title" href="/7ecb09b6/" title="二三事">二三事</a><time datetime="2022-02-28T14:31:33.000Z" title="发表于 2022-02-28 22:31:33">2022-02-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/a4f453ce/" title="【穿越史诗】《耳语魔兽》角色扮演项目"><img src="/a4f453ce/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="【穿越史诗】《耳语魔兽》角色扮演项目"/></a><div class="content"><a class="title" href="/a4f453ce/" title="【穿越史诗】《耳语魔兽》角色扮演项目">【穿越史诗】《耳语魔兽》角色扮演项目</a><time datetime="2022-02-23T15:25:00.000Z" title="发表于 2022-02-23 23:25:00">2022-02-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/d80b1daa/" title="如何制作装备和添加掉落"><img src="/d80b1daa/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="如何制作装备和添加掉落"/></a><div class="content"><a class="title" href="/d80b1daa/" title="如何制作装备和添加掉落">如何制作装备和添加掉落</a><time datetime="2021-09-24T11:24:49.000Z" title="发表于 2021-09-24 19:24:49">2021-09-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/709008c9/" title="Acore-world数据库之各类loot-template表全面解释"><img src="/709008c9/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Acore-world数据库之各类loot-template表全面解释"/></a><div class="content"><a class="title" href="/709008c9/" title="Acore-world数据库之各类loot-template表全面解释">Acore-world数据库之各类loot-template表全面解释</a><time datetime="2021-09-19T09:24:49.000Z" title="发表于 2021-09-19 17:24:49">2021-09-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="footer_custom_text"><a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn/"><img class="icp-icon" src="/imgs/icp.png"><span>黔ICP备2021002214号</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start -->
+  <script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/hexo-github-calendar@1.21/hexo_githubcalendar.js"></script>
+  <script data-pjax>
+        function GithubCalendarConfig(){
+            var git_githubapiurl ="https://python-github-calendar-api.vercel.app/api?gswxy";
+            var git_color =['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'];
+            var git_user ="gswxy";
+            var parent_div_git = document.getElementById('recent-posts');
+            var git_div_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><div id="github_loading" style="width:10%;height:100%;margin:0 auto;display: block"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animateTransform></path></svg></div><div id="github_container"></div></div>';
+            if(parent_div_git && location.pathname =='/'){
+                console.log('已挂载github calendar')
+                // parent_div_git.innerHTML=git_div_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                parent_div_git.insertAdjacentHTML("afterbegin",git_div_html) // 有报错，但不影响使用(支持pjax跳转)
+            };
+            GithubCalendar(git_githubapiurl,git_color,git_user)
+        }
+        if(document.getElementById('recent-posts')){
+            GithubCalendarConfig()
+        }
+    </script>
+    <style>#github_container{min-height:280px}@media screen and (max-width:650px) {#github_container{background-image:;min-height:0px}}</style>
+    <style></style> <script data-pjax>if(document.getElementById('recent-posts') && location.pathname =='/'){
+    
+    var parent = document.getElementById('recent-posts');
+    var child = '<div class="recent-post-item" style="height: auto;width: 100%"><div class="blog-slider swiper-container-fade swiper-container-horizontal" id="swiper_container"><div class="blog-slider__wrp swiper-wrapper" style="transition-duration: 0ms"><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="79d5cd74/cover.png" alt="79d5cd74/cover.png"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-09-08</span><a class="blog-slider__title" href="79d5cd74/">Linux下编译Azerothcore源码</a><div class="blog-slider__text">Linux下编译Azerothcore源码</div><a class="blog-slider__button" href="79d5cd74/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="cb97581d/cover.png" alt="cb97581d/cover.png"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-08-30</span><a class="blog-slider__title" href="cb97581d/">GSWXY_AZauto一键编译源码</a><div class="blog-slider__text">Windows下一键编译Azerothcore源码</div><a class="blog-slider__button" href="cb97581d/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="7b077fed/cover.jpg" alt="7b077fed/cover.jpg"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-08-24</span><a class="blog-slider__title" href="7b077fed/">Docker编译Azerothcore源码</a><div class="blog-slider__text">Docker编译Azerothcore源码</div><a class="blog-slider__button" href="7b077fed/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="41cd9b5d/cover.jpg" alt="41cd9b5d/cover.jpg"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-07-19</span><a class="blog-slider__title" href="41cd9b5d/">Windows下编译Azerothcore源码</a><div class="blog-slider__text">Windows下编译Azerothcore源码</div><a class="blog-slider__button" href="41cd9b5d/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="a4f453ce/cover.jpg" alt="a4f453ce/cover.jpg"/></div><div class="blog-slider__content"><span class="blog-slider__code">2022-02-23</span><a class="blog-slider__title" href="a4f453ce/">【穿越史诗】《耳语魔兽》角色扮演项目</a><div class="blog-slider__text">GSWXY的封笔之作，史诗项目</div><a class="blog-slider__button" href="a4f453ce/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="9cc7e1be/1.png" alt="9cc7e1be/1.png"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-09-10</span><a class="blog-slider__title" href="9cc7e1be/">GSWXY-单机服务端Docker版</a><div class="blog-slider__text">基于Docker的魔兽世界单机端</div><a class="blog-slider__button" href="9cc7e1be/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="22042029/cover.png" alt="22042029/cover.png"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-07-18</span><a class="blog-slider__title" href="22042029/">内网穿透之ZeroTier布设虚拟局域网</a><div class="blog-slider__text">教你怎么用zerotier来实现内网穿透</div><a class="blog-slider__button" href="22042029/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="3a49f122/cover.jpg" alt="3a49f122/cover.jpg"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-07-17</span><a class="blog-slider__title" href="3a49f122/">内网穿透介绍及FRP部署</a><div class="blog-slider__text">教你怎么用frp来实现内网穿透</div><a class="blog-slider__button" href="3a49f122/">详情</a></div></div></div><div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div></div></div>';
+    console.log('已挂载swiper')
+    parent.insertAdjacentHTML("afterbegin",child)}
+     </script>
+<script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-swiper/swiper/swiper.min.js"></script>
+<script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-swiper@0.18/swiper/swiperindex.js"></script>
+<style></style><!-- hexo injector body_end end --></body></html>

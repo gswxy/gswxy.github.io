@@ -1,0 +1,749 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Acore_auth数据库全面解释 | GSWXY</title><meta name="keywords" content="魔兽数据库,AzerothCore,AC源码,acore_auth,魔兽单机"><meta name="author" content="GSWXY"><meta name="copyright" content="GSWXY"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="acore_auth数据库各表的详细解释">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Acore_auth数据库全面解释">
+<meta property="og:url" content="https://www.gswxy.com/e2fc309a/index.html">
+<meta property="og:site_name" content="GSWXY">
+<meta property="og:description" content="acore_auth数据库各表的详细解释">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.gswxy.com/e2fc309a/cover.jpg">
+<meta property="article:published_time" content="2021-08-25T07:24:49.000Z">
+<meta property="article:modified_time" content="2021-08-25T07:24:49.000Z">
+<meta property="article:author" content="GSWXY">
+<meta property="article:tag" content="魔兽数据库&amp;DBC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.gswxy.com/e2fc309a/cover.jpg"><link rel="shortcut icon" href="/imgs/favicon.jpg"><link rel="canonical" href="https://www.gswxy.com/e2fc309a/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?c4c2253f01ae0fc7bd2535b4e2a2c4c8";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-8ES6QNBGGR"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-8ES6QNBGGR');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":300,"languages":{"author":"作者: GSWXY","link":"链接: ","source":"来源: GSWXY","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Acore_auth数据库全面解释',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-08-25 15:24:49'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-swiper/swiper/swiper.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-swiper/swiper/swiperstyle.css"><!-- hexo injector head_end end --><meta name="generator" content="Hexo 5.4.1"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/imgs/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://chat.gswxy.com"><i class="fa-fw fas fa-comments"></i><span> 聊天</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-award"></i><span> 关于</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heartbeat"></i><span> 我们</span></a></li><li><a class="site-page child" target="_blank" rel="noopener external nofollow noreferrer" href="http://book.gswxy.com"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-trophy"></i><span> 游戏</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">GSWXY</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener external nofollow noreferrer" href="https://chat.gswxy.com"><i class="fa-fw fas fa-comments"></i><span> 聊天</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);" rel="external nofollow noreferrer"><i class="fa-fw fas fa-award"></i><span> 关于</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-heartbeat"></i><span> 我们</span></a></li><li><a class="site-page child" target="_blank" rel="noopener external nofollow noreferrer" href="http://book.gswxy.com"><i class="fa-fw fas fa-book"></i><span> 书籍</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/games/"><i class="fa-fw fas fa-trophy"></i><span> 游戏</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Acore_auth数据库全面解释</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-08-25T07:24:49.000Z" title="发表于 2021-08-25 15:24:49">2021-08-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-08-25T07:24:49.000Z" title="更新于 2021-08-25 15:24:49">2021-08-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AD%94%E5%85%BD%E6%8A%80%E6%9C%AF/">魔兽技术</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AD%94%E5%85%BD%E6%8A%80%E6%9C%AF/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8CDBC/">数据库和DBC</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Acore_auth数据库全面解释"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div><article class="post-content" id="article-container"><p>简单说吧，如果你不会源码修改编译，单单玩数据库和DBC就能做出很有特色的端。Azerothcore的数据库是Mysql，所以你得下载个SQL管理工具，大家比较常用的是<a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.navicat.com.cn/">Navicat SQL</a>，我常用的是<a target="_blank" rel="noopener external nofollow noreferrer" href="https://www.heidisql.com/">HeidiSQL</a>（免费）。连接数据库的话，地址、用户名和密码请自行查找服务端内的worldserver.conf文件，示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">LoginDatabaseInfo     = &quot;127.0.0.1;3306;acore;123456;acore_auth&quot;</span><br><span class="line">WorldDatabaseInfo     = &quot;127.0.0.1;3306;acore;123456;acore_world&quot;</span><br><span class="line">CharacterDatabaseInfo = &quot;127.0.0.1;3306;acore;123456;acore_characters&quot;</span><br><span class="line">#127.0.0.1是登陆地址，3306是端口，acore是该数据库用户名，123456是密码，acore_XXX是数据库名称</span><br></pre></td></tr></table></figure>
+
+<p>Azerothcore数据库有三个：acore_auth、acore_characters和acore_world。因为一篇文章讲不完SQL修改，所以本文只把acore_auth各表的含义和字段解释列出来，后期陆续更新acore_world和acore_characters数据库，形成一个系列文章，最后将对实现某些功能做实操讲解。</p>
+<p>这篇文章系列会很长很长，也是基于官方Wiki和各类教程，自行翻译糅合而成，如有错误还请指明。请善用Ctrl+F搜索和右边的目录侧边栏。</p>
+<p>再次强调，各位若想玩数据库，就先把数据库系列文章详读、熟读！</p>
+<p>言归正传，acore_auth数据库目前有 14 张表格，主要存储与用户帐户相关的信息：</p>
+<h1 id="account"><a href="#account" class="headerlink" title="account"></a>account</h1><h2 id="id"><a href="#id" class="headerlink" title="id"></a>id</h2><p>唯一的帐户 ID。</p>
+<h2 id="username"><a href="#username" class="headerlink" title="username"></a>username</h2><p>用户的帐户名称，限制为 20 个字符。</p>
+<h2 id="salt"><a href="#salt" class="headerlink" title="salt"></a>salt</h2><p>加密密码。</p>
+<h2 id="verifier"><a href="#verifier" class="headerlink" title="verifier"></a>verifier</h2><p>用户名和密码加密。</p>
+<h2 id="session-key"><a href="#session-key" class="headerlink" title="session_key"></a>session_key</h2><p>未知。</p>
+<h2 id="totp-secret"><a href="#totp-secret" class="headerlink" title="totp_secret"></a>totp_secret</h2><p>谷歌身份验证器的Key，不重要。</p>
+<h2 id="email"><a href="#email" class="headerlink" title="email"></a>email</h2><p>账户的邮箱地址。</p>
+<h2 id="reg-mail"><a href="#reg-mail" class="headerlink" title="reg_mail"></a>reg_mail</h2><p>与此帐户关联的注册电子邮件地址。</p>
+<h2 id="joindate"><a href="#joindate" class="headerlink" title="joindate"></a>joindate</h2><p>账户创建时间。</p>
+<h2 id="last-ip"><a href="#last-ip" class="headerlink" title="last_ip"></a>last_ip</h2><p>最后一次登录的IP地址。</p>
+<h2 id="failed-logins"><a href="#failed-logins" class="headerlink" title="failed_logins"></a>failed_logins</h2><p>账户登录失败的次数。</p>
+<h2 id="locked"><a href="#locked" class="headerlink" title="locked"></a>locked</h2><p>该字段为1时，账户只能从最后一次登录的IP地址登录；为0时，可以从任意IP地址登录。</p>
+<h2 id="last-login"><a href="#last-login" class="headerlink" title="last_login"></a>last_login</h2><p>最后一次登录的时间。</p>
+<h2 id="totaltime"><a href="#totaltime" class="headerlink" title="totaltime"></a>totaltime</h2><p>玩家账户内所有角色的游玩时间合计，包括玩家已删除的角色。</p>
+<h2 id="online"><a href="#online" class="headerlink" title="online"></a>online</h2><p>0代表离线，1代表在线。</p>
+<h2 id="expansion"><a href="#expansion" class="headerlink" title="expansion"></a>expansion</h2><p>控制该账户的游玩版本，举例：玩家的客户端虽然是WLK335，但该字段的数值为1，则他只能玩经典世界和TBC的内容，而进去不诺森德。</p>
+<table>
+<thead>
+<tr>
+<th>数值</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>经典世界</td>
+</tr>
+<tr>
+<td>1</td>
+<td>TBC</td>
+</tr>
+<tr>
+<td>2</td>
+<td>WLK</td>
+</tr>
+</tbody></table>
+<h2 id="mutetime"><a href="#mutetime" class="headerlink" title="mutetime"></a>mutetime</h2><p>账户被禁言的剩余时间。</p>
+<h2 id="mutereason"><a href="#mutereason" class="headerlink" title="mutereason"></a>mutereason</h2><p>账户被禁言的原因。</p>
+<h2 id="muteby"><a href="#muteby" class="headerlink" title="muteby"></a>muteby</h2><p>赋予静音的（.mute）命令权限的角色名称。</p>
+<h2 id="locale"><a href="#locale" class="headerlink" title="locale"></a>locale</h2><p>登录到这个账户的客户所使用的语言。</p>
+<h2 id="os"><a href="#os" class="headerlink" title="os"></a>os</h2><p>存储有关客户操作系统的信息（Win和Mac）。</p>
+<h2 id="recruiter"><a href="#recruiter" class="headerlink" title="recruiter"></a>recruiter</h2><p>该账户招募的朋友账户ID。</p>
+<h1 id="account-access"><a href="#account-access" class="headerlink" title="account_access"></a>account_access</h1><p>简单理解，这张表存储了某区服的GM信息。</p>
+<h2 id="id-1"><a href="#id-1" class="headerlink" title="id"></a>id</h2><p>唯一的帐户 ID，参照account表的id字段。</p>
+<h2 id="gmlevel"><a href="#gmlevel" class="headerlink" title="gmlevel"></a>gmlevel</h2><p>帐户的GM级别，不同的级别可以使用不同的命令，级别可以参照acore_world数据库内command表的security字段。</p>
+<h2 id="RealmID"><a href="#RealmID" class="headerlink" title="RealmID"></a>RealmID</h2><p>账户所在的区服，参照realmlist表内的ID。</p>
+<h2 id="comment"><a href="#comment" class="headerlink" title="comment"></a>comment</h2><p>顾名思义：备注，可自行填写。</p>
+<h1 id="account-banned"><a href="#account-banned" class="headerlink" title="account_banned"></a>account_banned</h1><p>这个表格列出了所有被禁止的账户，以及禁令何时（或是否）到期的日期。</p>
+<h2 id="id-2"><a href="#id-2" class="headerlink" title="id"></a>id</h2><p>唯一的帐户 ID。</p>
+<h2 id="bandate"><a href="#bandate" class="headerlink" title="bandate"></a>bandate</h2><p>帐户被禁止的日期。</p>
+<h2 id="unbandate"><a href="#unbandate" class="headerlink" title="unbandate"></a>unbandate</h2><p>帐户将被自动解禁的日期。假如设置一个小于当前日期的值，实际上是一个永久禁止。</p>
+<h2 id="bannedby"><a href="#bannedby" class="headerlink" title="bannedby"></a>bannedby</h2><p>禁用该账户的GM角色的名字。但如果是从控制台被禁止的，那这个值将是空的。</p>
+<h2 id="banreason"><a href="#banreason" class="headerlink" title="banreason"></a>banreason</h2><p>被禁止的原因。</p>
+<h2 id="active"><a href="#active" class="headerlink" title="active"></a>active</h2><p>数值0则这条禁令无效，数值1则这条禁令有效。</p>
+<h2 id="account-muted"><a href="#account-muted" class="headerlink" title="account_muted"></a>account_muted</h2><p>该表包含其角色被指定为禁言的账户ID。</p>
+<p>GM命令: .mute [$playerName] $timeInMinutes [$reason]</p>
+<p>在$timeInMinutes分钟内，禁言$playerName（或当前选择的）角色账户中任何角色。玩家可以不在线。</p>
+<h2 id="guid"><a href="#guid" class="headerlink" title="guid"></a>guid</h2><p>禁言账户的ID。这个账户上的所有角色都将在禁言期内被禁言。</p>
+<h2 id="mutedate"><a href="#mutedate" class="headerlink" title="mutedate"></a>mutedate</h2><p>禁言开始的时间。</p>
+<h2 id="mutetime-1"><a href="#mutetime-1" class="headerlink" title="mutetime"></a>mutetime</h2><p>禁言的时长（分钟）。</p>
+<h2 id="mutedby"><a href="#mutedby" class="headerlink" title="mutedby"></a>mutedby</h2><p>发布禁言的GM名称。</p>
+<h2 id="mutereason-1"><a href="#mutereason-1" class="headerlink" title="mutereason"></a>mutereason</h2><p>禁言的原因。</p>
+<h1 id="autobroadcast"><a href="#autobroadcast" class="headerlink" title="autobroadcast"></a>autobroadcast</h1><p>这张表包含了你各个区服的广播信息，基于它们的权重随机播放。</p>
+<h3 id="realmid"><a href="#realmid" class="headerlink" title="realmid"></a>realmid</h3><p>定义这个广播信息属于哪个区服。对所有区服使用的话写：-1。</p>
+<h3 id="id-3"><a href="#id-3" class="headerlink" title="id"></a>id</h3><p>每个区服的唯一标识符。具有相同id的广播信息将相互覆盖而没有警告，假设1广播信息的realmid值设置为-1，那么你想在2区服里不播放1而是播放3广播信息，则readmid写2，id写3。</p>
+<h3 id="weight"><a href="#weight" class="headerlink" title="weight"></a>weight</h3><p>整数值（不可为负值）。权重高的条目有更多机会被选中。</p>
+<h3 id="text"><a href="#text" class="headerlink" title="text"></a>text</h3><p>要广播的文本。可以使用颜色和物品、技能、任务链接形成的代码。</p>
+<h1 id="build-info"><a href="#build-info" class="headerlink" title="build_info"></a>build_info</h1><p>各类客户端信息。</p>
+<h1 id="ip-banned"><a href="#ip-banned" class="headerlink" title="ip_banned"></a>ip_banned</h1><p>这个表格包含了所有被禁止的IP，以及禁令何时（或是否）到期的日期。</p>
+<h3 id="ip"><a href="#ip" class="headerlink" title="ip"></a>ip</h3><p>被禁止的IP地址。</p>
+<h3 id="bandate-1"><a href="#bandate-1" class="headerlink" title="bandate"></a>bandate</h3><p>该IP首次被禁止的日期。</p>
+<h3 id="unbandate-1"><a href="#unbandate-1" class="headerlink" title="unbandate"></a>unbandate</h3><p>该IP将被解禁的日期。任何低于当前日期的日期基本上都被归类为永久禁止，因为它永远不会自动过期。</p>
+<h3 id="bannedby-1"><a href="#bannedby-1" class="headerlink" title="bannedby"></a>bannedby</h3><p>禁用该IP的角色名字。该角色应该属于一个有权在游戏中使用.ban命令的账户。</p>
+<h3 id="banreason-1"><a href="#banreason-1" class="headerlink" title="banreason"></a>banreason</h3><p>所给出的禁止IP的理由。</p>
+<h1 id="logs"><a href="#logs" class="headerlink" title="logs"></a>logs</h1><p>This table stores logs from <code>Appender</code> type database in config file. Example db appender:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Appender.DB=3,5,0</span><br></pre></td></tr></table></figure>
+
+<h3 id="time"><a href="#time" class="headerlink" title="time"></a>time</h3><p>这个字符串被记录的时间。</p>
+<h3 id="realm"><a href="#realm" class="headerlink" title="realm"></a>realm</h3><p>该日志字符串的区服ID（RealmID）。</p>
+<h3 id="type"><a href="#type" class="headerlink" title="type"></a>type</h3><p>配置中的<code>Logger</code> 名称，示例logger:</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Logger.server=4,Console Server</span><br></pre></td></tr></table></figure>
+
+<h3 id="level"><a href="#level" class="headerlink" title="level"></a>level</h3><p>取决于authserver.conf中的LogLevel：</p>
+<table>
+<thead>
+<tr>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>(Fatal)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>(Error)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>(Warning)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>(Info)</td>
+</tr>
+<tr>
+<td>5</td>
+<td>(Debug)</td>
+</tr>
+<tr>
+<td>6</td>
+<td>(Trace)</td>
+</tr>
+</tbody></table>
+<h3 id="string"><a href="#string" class="headerlink" title="string"></a>string</h3><p>被记录下来的实际字符串。</p>
+<h1 id="logs-ip-actions"><a href="#logs-ip-actions" class="headerlink" title="logs_ip_actions"></a>logs_ip_actions</h1><p>记录<code>logs_ip_actions</code> 的表。</p>
+<h1 id="realmcharacters"><a href="#realmcharacters" class="headerlink" title="realmcharacters"></a>realmcharacters</h1><p>这个表保存了每个账户在每个区服拥有的角色数信息，此表的数据由核心自动更改，不可自行更改。</p>
+<h3 id="realmid-1"><a href="#realmid-1" class="headerlink" title="realmid"></a>realmid</h3><p>区服的ID。</p>
+<h3 id="acctid"><a href="#acctid" class="headerlink" title="acctid"></a>acctid</h3><p>账户的ID。</p>
+<h3 id="numchars"><a href="#numchars" class="headerlink" title="numchars"></a>numchars</h3><p>该账户在该区服上拥有的角色数。</p>
+<h1 id="realmlist"><a href="#realmlist" class="headerlink" title="realmlist"></a>realmlist</h1><p>这个表设置了所有可用的区服的信息。每一行控制一个不同的区服。</p>
+<h3 id="id-4"><a href="#id-4" class="headerlink" title="id"></a>id</h3><p>区服ID。数值必须&gt;=0且必须唯一，它必须与worldserver.conf中的RealmID配置值相关。</p>
+<h3 id="name"><a href="#name" class="headerlink" title="name"></a>name</h3><p>区服的名称。这将出现在区服选择列表以及角色选择屏幕中。</p>
+<h3 id="address"><a href="#address" class="headerlink" title="address"></a>address</h3><p>世界服务器的互联网（WAN）或局域网（LAN）IP地址。如果只有你架设在局域网内，在这个地址使用127.0.0.1，如果想让互联网访问，请输入公网IP地址。</p>
+<p>或者，你可以使用一个域名，比如： *example.com。</p>
+<h3 id="localAddress"><a href="#localAddress" class="headerlink" title="localAddress"></a>localAddress</h3><p>本地IP地址，请填127.0.0.1。</p>
+<h3 id="port"><a href="#port" class="headerlink" title="port"></a>port</h3><p>服务端所运行的端口，在一台机子上运行了很多服务端，或者出于安全考虑，你可以自行更改这个端口。</p>
+<h3 id="icon"><a href="#icon" class="headerlink" title="icon"></a>icon</h3><p>区服的ICON图，可标识为PVP或者RP服等，数值示例：</p>
+<table>
+<thead>
+<tr>
+<th>Icon</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>一般</td>
+</tr>
+<tr>
+<td>1</td>
+<td>PvP服</td>
+</tr>
+<tr>
+<td>4</td>
+<td>一般</td>
+</tr>
+<tr>
+<td>6</td>
+<td>RP服</td>
+</tr>
+<tr>
+<td>8</td>
+<td>RP PvP服</td>
+</tr>
+</tbody></table>
+<h3 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h3><p>区服的标志：</p>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Hex value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0x0</td>
+<td>无</td>
+</tr>
+<tr>
+<td>1</td>
+<td>0x1</td>
+<td>无效</td>
+</tr>
+<tr>
+<td>2</td>
+<td>0x2</td>
+<td>离线</td>
+</tr>
+<tr>
+<td>4</td>
+<td>0x4</td>
+<td>特定服</td>
+</tr>
+<tr>
+<td>8</td>
+<td>0x8</td>
+<td>中型</td>
+</tr>
+<tr>
+<td>16</td>
+<td>0xF</td>
+<td>中型</td>
+</tr>
+<tr>
+<td>32</td>
+<td>0x10</td>
+<td>新服</td>
+</tr>
+<tr>
+<td>64</td>
+<td>0x20</td>
+<td>建议服</td>
+</tr>
+<tr>
+<td>128</td>
+<td>0x40</td>
+<td>满服</td>
+</tr>
+</tbody></table>
+<h3 id="timezone"><a href="#timezone" class="headerlink" title="timezone"></a>timezone</h3><p>区服的时区，它将显示在realmlist的标签中，数值示例：</p>
+<table>
+<thead>
+<tr>
+<th>timezone</th>
+<th>displayed name</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>Development</td>
+</tr>
+<tr>
+<td>2</td>
+<td>United States</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Oceanic</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Latin America</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Tournament</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Korea</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Tournament</td>
+</tr>
+<tr>
+<td>8</td>
+<td>English</td>
+</tr>
+<tr>
+<td>9</td>
+<td>German</td>
+</tr>
+<tr>
+<td>10</td>
+<td>French</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Spanish</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Russian</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Tournament</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Taiwan</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Tournament</td>
+</tr>
+<tr>
+<td>16</td>
+<td>China</td>
+</tr>
+<tr>
+<td>17</td>
+<td>CN1</td>
+</tr>
+<tr>
+<td>18</td>
+<td>CN2</td>
+</tr>
+<tr>
+<td>19</td>
+<td>CN3</td>
+</tr>
+<tr>
+<td>20</td>
+<td>CN4</td>
+</tr>
+<tr>
+<td>21</td>
+<td>CN5</td>
+</tr>
+<tr>
+<td>22</td>
+<td>CN6</td>
+</tr>
+<tr>
+<td>23</td>
+<td>CN7</td>
+</tr>
+<tr>
+<td>24</td>
+<td>CN8</td>
+</tr>
+<tr>
+<td>25</td>
+<td>Tournament</td>
+</tr>
+<tr>
+<td>26</td>
+<td>Test Server</td>
+</tr>
+<tr>
+<td>27</td>
+<td>Tournament</td>
+</tr>
+<tr>
+<td>29</td>
+<td>CN9</td>
+</tr>
+<tr>
+<td>30</td>
+<td>Test Server 2</td>
+</tr>
+<tr>
+<td>31</td>
+<td>CN10</td>
+</tr>
+<tr>
+<td>32</td>
+<td>CTC</td>
+</tr>
+<tr>
+<td>33</td>
+<td>CNC</td>
+</tr>
+<tr>
+<td>34</td>
+<td>CN1/4</td>
+</tr>
+<tr>
+<td>35</td>
+<td>CN/2/6/9</td>
+</tr>
+<tr>
+<td>36</td>
+<td>CN3/7</td>
+</tr>
+<tr>
+<td>37</td>
+<td>Russian Tournament</td>
+</tr>
+<tr>
+<td>38</td>
+<td>CN5/8</td>
+</tr>
+<tr>
+<td>39</td>
+<td>CN11</td>
+</tr>
+<tr>
+<td>40</td>
+<td>CN12</td>
+</tr>
+<tr>
+<td>41</td>
+<td>CN13</td>
+</tr>
+<tr>
+<td>42</td>
+<td>CN14</td>
+</tr>
+<tr>
+<td>43</td>
+<td>CN15</td>
+</tr>
+<tr>
+<td>44</td>
+<td>CN16</td>
+</tr>
+<tr>
+<td>45</td>
+<td>CN17</td>
+</tr>
+<tr>
+<td>46</td>
+<td>CN18</td>
+</tr>
+<tr>
+<td>47</td>
+<td>CN19</td>
+</tr>
+<tr>
+<td>48</td>
+<td>CN20</td>
+</tr>
+<tr>
+<td>49</td>
+<td>Brazil</td>
+</tr>
+<tr>
+<td>50</td>
+<td>Italian</td>
+</tr>
+<tr>
+<td>51</td>
+<td>Hyrule</td>
+</tr>
+<tr>
+<td>52</td>
+<td>QA2 Test</td>
+</tr>
+<tr>
+<td>53</td>
+<td></td>
+</tr>
+<tr>
+<td>54</td>
+<td></td>
+</tr>
+<tr>
+<td>55</td>
+<td>Recommended Realm</td>
+</tr>
+<tr>
+<td>56</td>
+<td>Test</td>
+</tr>
+<tr>
+<td>57</td>
+<td>Recommended Realm</td>
+</tr>
+<tr>
+<td>58</td>
+<td></td>
+</tr>
+<tr>
+<td>59</td>
+<td>Future Test</td>
+</tr>
+</tbody></table>
+<h3 id="allowedSecurityLevel"><a href="#allowedSecurityLevel" class="headerlink" title="allowedSecurityLevel"></a>allowedSecurityLevel</h3><p>帐户登录到该区服所需的最低帐户gm级别。改变这个值会自动更新游戏中可见的区服列表，但必须重新启动世界服务器才能真正生效。可以建立个GM专属服。</p>
+<h3 id="population"><a href="#population" class="headerlink" title="population"></a>population</h3><p>该区服的玩家数量，每隔一段时间会自动更新。计算公式为：目前在线玩家数量/最大玩家数量* 2。在区服的列表中，低、中、高人口的阈值分别为0.5、1.0和2.0。</p>
+<h3 id="gamebuild"><a href="#gamebuild" class="headerlink" title="gamebuild"></a>gamebuild</h3><p>这个区服可使用的的客户端版本，示例：</p>
+<table>
+<thead>
+<tr>
+<th>Build Version</th>
+<th>Client Patch</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5875</td>
+<td>1.12.1</td>
+</tr>
+<tr>
+<td>6005</td>
+<td>1.12.2</td>
+</tr>
+<tr>
+<td>8606</td>
+<td>2.4.3</td>
+</tr>
+<tr>
+<td>9947</td>
+<td>3.1.3</td>
+</tr>
+<tr>
+<td>10146</td>
+<td>3.2.0</td>
+</tr>
+<tr>
+<td>10505</td>
+<td>3.2.2a</td>
+</tr>
+<tr>
+<td>10571</td>
+<td>3.3.0</td>
+</tr>
+<tr>
+<td>11159</td>
+<td>3.3.0a</td>
+</tr>
+<tr>
+<td>11403</td>
+<td>3.3.2</td>
+</tr>
+<tr>
+<td>11623</td>
+<td>3.3.3</td>
+</tr>
+<tr>
+<td>11723</td>
+<td>3.3.3a</td>
+</tr>
+<tr>
+<td>12340</td>
+<td>3.3.5a</td>
+</tr>
+</tbody></table>
+<h1 id="secret-digest"><a href="#secret-digest" class="headerlink" title="secret_digest"></a>secret_digest</h1><p>记录 <strong><code>secret_digest</code></strong> 的表。</p>
+<h1 id="updates"><a href="#updates" class="headerlink" title="updates"></a>updates</h1><p>记录了该数据库更新情况。</p>
+<h3 id="name-1"><a href="#name-1" class="headerlink" title="name"></a>name</h3><p>导入文件的文件名。</p>
+<h3 id="hash"><a href="#hash" class="headerlink" title="hash"></a>hash</h3><p>来自导入文件的SHA1哈希值。</p>
+<h3 id="state"><a href="#state" class="headerlink" title="state"></a>state</h3><p>定义更新是否已发布、自定义或归档。</p>
+<h3 id="timestamp"><a href="#timestamp" class="headerlink" title="timestamp"></a>timestamp</h3><p>文件被导入的时间。</p>
+<h3 id="speed"><a href="#speed" class="headerlink" title="speed"></a>speed</h3><p>导入文件所需的时间（毫秒）。</p>
+<h1 id="updates-include"><a href="#updates-include" class="headerlink" title="updates_include"></a>updates_include</h1><p>该表定义了更新所需要的目录。</p>
+<h3 id="path"><a href="#path" class="headerlink" title="path"></a>path</h3><p>更新目录。$表示相对于源目录。</p>
+<h3 id="state-1"><a href="#state-1" class="headerlink" title="state"></a>state</h3><p>定义该目录是否有发布的、自定义的或存档的更新。</p>
+<h1 id="uptime"><a href="#uptime" class="headerlink" title="uptime"></a>uptime</h1><p>这个表保存了服务器的正常运行时间。核心将自动更新最新条目的值。</p>
+<h3 id="realmid-2"><a href="#realmid-2" class="headerlink" title="realmid"></a>realmid</h3><p>区服的ID。</p>
+<h3 id="starttime"><a href="#starttime" class="headerlink" title="starttime"></a>starttime</h3><p>服务器启动的时间。</p>
+<h3 id="uptime-1"><a href="#uptime-1" class="headerlink" title="uptime"></a>uptime</h3><p>服务器的正常运行时间，以秒为单位。</p>
+<h3 id="maxplayers"><a href="#maxplayers" class="headerlink" title="maxplayers"></a>maxplayers</h3><p>连接的最大玩家数量。</p>
+<h3 id="revision"><a href="#revision" class="headerlink" title="revision"></a>revision</h3><p>对服务端的详细修订。</p>
+<h1 id="version-db-auth"><a href="#version-db-auth" class="headerlink" title="version_db_auth"></a>version_db_auth</h1><p>描述了该数据库的版本信息。</p>
+<h3 id="sql-rev"><a href="#sql-rev" class="headerlink" title="sql_rev"></a>sql_rev</h3><p>标识数值。</p>
+<h3 id="required-rev"><a href="#required-rev" class="headerlink" title="required_rev"></a>required_rev</h3><p>不知道是啥，一般是空值。</p>
+<h3 id="date"><a href="#date" class="headerlink" title="date"></a>date</h3><p>Sql的修订日期。</p>
+<h3 id="2021-06-17-00"><a href="#2021-06-17-00" class="headerlink" title="2021_06_17_00"></a>2021_06_17_00</h3><p>最后一次更新认证数据库的日期。请注意，这一栏会根据授权数据库的最后一次更新而自动改变。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">GSWXY</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.gswxy.com/e2fc309a/">https://www.gswxy.com/e2fc309a/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.gswxy.com" target="_blank">GSWXY</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%AD%94%E5%85%BD%E6%95%B0%E6%8D%AE%E5%BA%93-DBC/">魔兽数据库&amp;DBC</a></div><div class="post_share"><div class="social-share" data-image="/e2fc309a/cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/imgs/wechat.png" target="_blank"><img class="post-qr-code-img" src="/imgs/wechat.png" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/imgs/alipay.png" target="_blank"><img class="post-qr-code-img" src="/imgs/alipay.png" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/cb97581d/"><img class="prev-cover" src="/cb97581d/cover.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">GSWXY_AZauto一键编译源码</div></div></a></div><div class="next-post pull-right"><a href="/7b077fed/"><img class="next-cover" src="/7b077fed/cover.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Docker编译Azerothcore源码</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/32496ea0/" title="Acore-world数据库之item-template表全面解释"><img class="cover" src="/32496ea0/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-15</div><div class="title">Acore-world数据库之item-template表全面解释</div></div></a></div><div><a href="/308ecb5/" title="如何制作物品随机附魔"><img class="cover" src="/308ecb5/cover.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-14</div><div class="title">如何制作物品随机附魔</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/imgs/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">GSWXY</div><div class="author-info__description">分享我们一些喜欢的事情</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">23</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" href="https://www.gswxy.com/about/"><i class="fab fa-github"></i><span>About Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">本站不开放评论，如有疑问请加QQ群：938973736，或点击右上角菜单进入聊天室！另外强烈推荐服务器（https://www.w3dhost.com），稳定靠谱性价比高（联系QQ：158001）</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#account"><span class="toc-number">1.</span> <span class="toc-text">account</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#id"><span class="toc-number">1.1.</span> <span class="toc-text">id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#username"><span class="toc-number">1.2.</span> <span class="toc-text">username</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#salt"><span class="toc-number">1.3.</span> <span class="toc-text">salt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#verifier"><span class="toc-number">1.4.</span> <span class="toc-text">verifier</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#session-key"><span class="toc-number">1.5.</span> <span class="toc-text">session_key</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#totp-secret"><span class="toc-number">1.6.</span> <span class="toc-text">totp_secret</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#email"><span class="toc-number">1.7.</span> <span class="toc-text">email</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#reg-mail"><span class="toc-number">1.8.</span> <span class="toc-text">reg_mail</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#joindate"><span class="toc-number">1.9.</span> <span class="toc-text">joindate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#last-ip"><span class="toc-number">1.10.</span> <span class="toc-text">last_ip</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#failed-logins"><span class="toc-number">1.11.</span> <span class="toc-text">failed_logins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#locked"><span class="toc-number">1.12.</span> <span class="toc-text">locked</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#last-login"><span class="toc-number">1.13.</span> <span class="toc-text">last_login</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#totaltime"><span class="toc-number">1.14.</span> <span class="toc-text">totaltime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#online"><span class="toc-number">1.15.</span> <span class="toc-text">online</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#expansion"><span class="toc-number">1.16.</span> <span class="toc-text">expansion</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mutetime"><span class="toc-number">1.17.</span> <span class="toc-text">mutetime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mutereason"><span class="toc-number">1.18.</span> <span class="toc-text">mutereason</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#muteby"><span class="toc-number">1.19.</span> <span class="toc-text">muteby</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#locale"><span class="toc-number">1.20.</span> <span class="toc-text">locale</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#os"><span class="toc-number">1.21.</span> <span class="toc-text">os</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#recruiter"><span class="toc-number">1.22.</span> <span class="toc-text">recruiter</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#account-access"><span class="toc-number">2.</span> <span class="toc-text">account_access</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#id-1"><span class="toc-number">2.1.</span> <span class="toc-text">id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#gmlevel"><span class="toc-number">2.2.</span> <span class="toc-text">gmlevel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RealmID"><span class="toc-number">2.3.</span> <span class="toc-text">RealmID</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#comment"><span class="toc-number">2.4.</span> <span class="toc-text">comment</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#account-banned"><span class="toc-number">3.</span> <span class="toc-text">account_banned</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#id-2"><span class="toc-number">3.1.</span> <span class="toc-text">id</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bandate"><span class="toc-number">3.2.</span> <span class="toc-text">bandate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#unbandate"><span class="toc-number">3.3.</span> <span class="toc-text">unbandate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bannedby"><span class="toc-number">3.4.</span> <span class="toc-text">bannedby</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#banreason"><span class="toc-number">3.5.</span> <span class="toc-text">banreason</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#active"><span class="toc-number">3.6.</span> <span class="toc-text">active</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#account-muted"><span class="toc-number">3.7.</span> <span class="toc-text">account_muted</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#guid"><span class="toc-number">3.8.</span> <span class="toc-text">guid</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mutedate"><span class="toc-number">3.9.</span> <span class="toc-text">mutedate</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mutetime-1"><span class="toc-number">3.10.</span> <span class="toc-text">mutetime</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mutedby"><span class="toc-number">3.11.</span> <span class="toc-text">mutedby</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mutereason-1"><span class="toc-number">3.12.</span> <span class="toc-text">mutereason</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#autobroadcast"><span class="toc-number">4.</span> <span class="toc-text">autobroadcast</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#realmid"><span class="toc-number">4.0.1.</span> <span class="toc-text">realmid</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#id-3"><span class="toc-number">4.0.2.</span> <span class="toc-text">id</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#weight"><span class="toc-number">4.0.3.</span> <span class="toc-text">weight</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#text"><span class="toc-number">4.0.4.</span> <span class="toc-text">text</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#build-info"><span class="toc-number">5.</span> <span class="toc-text">build_info</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ip-banned"><span class="toc-number">6.</span> <span class="toc-text">ip_banned</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#ip"><span class="toc-number">6.0.1.</span> <span class="toc-text">ip</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bandate-1"><span class="toc-number">6.0.2.</span> <span class="toc-text">bandate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#unbandate-1"><span class="toc-number">6.0.3.</span> <span class="toc-text">unbandate</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bannedby-1"><span class="toc-number">6.0.4.</span> <span class="toc-text">bannedby</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#banreason-1"><span class="toc-number">6.0.5.</span> <span class="toc-text">banreason</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#logs"><span class="toc-number">7.</span> <span class="toc-text">logs</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#time"><span class="toc-number">7.0.1.</span> <span class="toc-text">time</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#realm"><span class="toc-number">7.0.2.</span> <span class="toc-text">realm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#type"><span class="toc-number">7.0.3.</span> <span class="toc-text">type</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#level"><span class="toc-number">7.0.4.</span> <span class="toc-text">level</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#string"><span class="toc-number">7.0.5.</span> <span class="toc-text">string</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#logs-ip-actions"><span class="toc-number">8.</span> <span class="toc-text">logs_ip_actions</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#realmcharacters"><span class="toc-number">9.</span> <span class="toc-text">realmcharacters</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#realmid-1"><span class="toc-number">9.0.1.</span> <span class="toc-text">realmid</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#acctid"><span class="toc-number">9.0.2.</span> <span class="toc-text">acctid</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#numchars"><span class="toc-number">9.0.3.</span> <span class="toc-text">numchars</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#realmlist"><span class="toc-number">10.</span> <span class="toc-text">realmlist</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#id-4"><span class="toc-number">10.0.1.</span> <span class="toc-text">id</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#name"><span class="toc-number">10.0.2.</span> <span class="toc-text">name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#address"><span class="toc-number">10.0.3.</span> <span class="toc-text">address</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#localAddress"><span class="toc-number">10.0.4.</span> <span class="toc-text">localAddress</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#port"><span class="toc-number">10.0.5.</span> <span class="toc-text">port</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#icon"><span class="toc-number">10.0.6.</span> <span class="toc-text">icon</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#flag"><span class="toc-number">10.0.7.</span> <span class="toc-text">flag</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#timezone"><span class="toc-number">10.0.8.</span> <span class="toc-text">timezone</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#allowedSecurityLevel"><span class="toc-number">10.0.9.</span> <span class="toc-text">allowedSecurityLevel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#population"><span class="toc-number">10.0.10.</span> <span class="toc-text">population</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gamebuild"><span class="toc-number">10.0.11.</span> <span class="toc-text">gamebuild</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#secret-digest"><span class="toc-number">11.</span> <span class="toc-text">secret_digest</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#updates"><span class="toc-number">12.</span> <span class="toc-text">updates</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#name-1"><span class="toc-number">12.0.1.</span> <span class="toc-text">name</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#hash"><span class="toc-number">12.0.2.</span> <span class="toc-text">hash</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#state"><span class="toc-number">12.0.3.</span> <span class="toc-text">state</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#timestamp"><span class="toc-number">12.0.4.</span> <span class="toc-text">timestamp</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#speed"><span class="toc-number">12.0.5.</span> <span class="toc-text">speed</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#updates-include"><span class="toc-number">13.</span> <span class="toc-text">updates_include</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#path"><span class="toc-number">13.0.1.</span> <span class="toc-text">path</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#state-1"><span class="toc-number">13.0.2.</span> <span class="toc-text">state</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#uptime"><span class="toc-number">14.</span> <span class="toc-text">uptime</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#realmid-2"><span class="toc-number">14.0.1.</span> <span class="toc-text">realmid</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#starttime"><span class="toc-number">14.0.2.</span> <span class="toc-text">starttime</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#uptime-1"><span class="toc-number">14.0.3.</span> <span class="toc-text">uptime</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#maxplayers"><span class="toc-number">14.0.4.</span> <span class="toc-text">maxplayers</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#revision"><span class="toc-number">14.0.5.</span> <span class="toc-text">revision</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#version-db-auth"><span class="toc-number">15.</span> <span class="toc-text">version_db_auth</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#sql-rev"><span class="toc-number">15.0.1.</span> <span class="toc-text">sql_rev</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#required-rev"><span class="toc-number">15.0.2.</span> <span class="toc-text">required_rev</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#date"><span class="toc-number">15.0.3.</span> <span class="toc-text">date</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2021-06-17-00"><span class="toc-number">15.0.4.</span> <span class="toc-text">2021_06_17_00</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/96a2fbae/" title="被遗忘者的哀歌"><img src="/96a2fbae/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="被遗忘者的哀歌"/></a><div class="content"><a class="title" href="/96a2fbae/" title="被遗忘者的哀歌">被遗忘者的哀歌</a><time datetime="2022-02-28T14:44:38.000Z" title="发表于 2022-02-28 22:44:38">2022-02-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/7ecb09b6/" title="二三事"><img src="/7ecb09b6/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="二三事"/></a><div class="content"><a class="title" href="/7ecb09b6/" title="二三事">二三事</a><time datetime="2022-02-28T14:31:33.000Z" title="发表于 2022-02-28 22:31:33">2022-02-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/a4f453ce/" title="【穿越史诗】《耳语魔兽》角色扮演项目"><img src="/a4f453ce/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="【穿越史诗】《耳语魔兽》角色扮演项目"/></a><div class="content"><a class="title" href="/a4f453ce/" title="【穿越史诗】《耳语魔兽》角色扮演项目">【穿越史诗】《耳语魔兽》角色扮演项目</a><time datetime="2022-02-23T15:25:00.000Z" title="发表于 2022-02-23 23:25:00">2022-02-23</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/d80b1daa/" title="如何制作装备和添加掉落"><img src="/d80b1daa/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="如何制作装备和添加掉落"/></a><div class="content"><a class="title" href="/d80b1daa/" title="如何制作装备和添加掉落">如何制作装备和添加掉落</a><time datetime="2021-09-24T11:24:49.000Z" title="发表于 2021-09-24 19:24:49">2021-09-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/709008c9/" title="Acore-world数据库之各类loot-template表全面解释"><img src="/709008c9/cover.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Acore-world数据库之各类loot-template表全面解释"/></a><div class="content"><a class="title" href="/709008c9/" title="Acore-world数据库之各类loot-template表全面解释">Acore-world数据库之各类loot-template表全面解释</a><time datetime="2021-09-19T09:24:49.000Z" title="发表于 2021-09-19 17:24:49">2021-09-19</time></div></div></div></div></div></div></main><footer id="footer" style="background: transparent"><div id="footer-wrap"><div class="footer_custom_text"><a target="_blank" rel="noopener external nofollow noreferrer" href="https://beian.miit.gov.cn/"><img class="icp-icon" src="/imgs/icp.png"><span>黔ICP备2021002214号</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"></div><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start -->
+  <script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/hexo-github-calendar@1.21/hexo_githubcalendar.js"></script>
+  <script data-pjax>
+        function GithubCalendarConfig(){
+            var git_githubapiurl ="https://python-github-calendar-api.vercel.app/api?gswxy";
+            var git_color =['#ebedf0', '#fdcdec', '#fc9bd9', '#fa6ac5', '#f838b2', '#f5089f', '#c4067e', '#92055e', '#540336', '#48022f', '#30021f'];
+            var git_user ="gswxy";
+            var parent_div_git = document.getElementById('recent-posts');
+            var git_div_html = '<div class="recent-post-item" style="width:100%;height:auto;padding:10px;"><div id="github_loading" style="width:10%;height:100%;margin:0 auto;display: block"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  viewBox="0 0 50 50" style="enable-background:new 0 0 50 50" xml:space="preserve"><path fill="#d0d0d0" d="M25.251,6.461c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615V6.461z" transform="rotate(275.098 25 25)"><animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="0.6s" repeatCount="indefinite"></animateTransform></path></svg></div><div id="github_container"></div></div>';
+            if(parent_div_git && location.pathname =='/'){
+                console.log('已挂载github calendar')
+                // parent_div_git.innerHTML=git_div_html+parent_div_git.innerHTML // 无报错，但不影响使用(支持pjax跳转)
+                parent_div_git.insertAdjacentHTML("afterbegin",git_div_html) // 有报错，但不影响使用(支持pjax跳转)
+            };
+            GithubCalendar(git_githubapiurl,git_color,git_user)
+        }
+        if(document.getElementById('recent-posts')){
+            GithubCalendarConfig()
+        }
+    </script>
+    <style>#github_container{min-height:280px}@media screen and (max-width:650px) {#github_container{background-image:;min-height:0px}}</style>
+    <style></style> <script data-pjax>if(document.getElementById('recent-posts') && location.pathname =='/'){
+    
+    var parent = document.getElementById('recent-posts');
+    var child = '<div class="recent-post-item" style="height: auto;width: 100%"><div class="blog-slider swiper-container-fade swiper-container-horizontal" id="swiper_container"><div class="blog-slider__wrp swiper-wrapper" style="transition-duration: 0ms"><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="79d5cd74/cover.png" alt="79d5cd74/cover.png"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-09-08</span><a class="blog-slider__title" href="79d5cd74/">Linux下编译Azerothcore源码</a><div class="blog-slider__text">Linux下编译Azerothcore源码</div><a class="blog-slider__button" href="79d5cd74/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="cb97581d/cover.png" alt="cb97581d/cover.png"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-08-30</span><a class="blog-slider__title" href="cb97581d/">GSWXY_AZauto一键编译源码</a><div class="blog-slider__text">Windows下一键编译Azerothcore源码</div><a class="blog-slider__button" href="cb97581d/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="7b077fed/cover.jpg" alt="7b077fed/cover.jpg"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-08-24</span><a class="blog-slider__title" href="7b077fed/">Docker编译Azerothcore源码</a><div class="blog-slider__text">Docker编译Azerothcore源码</div><a class="blog-slider__button" href="7b077fed/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="41cd9b5d/cover.jpg" alt="41cd9b5d/cover.jpg"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-07-19</span><a class="blog-slider__title" href="41cd9b5d/">Windows下编译Azerothcore源码</a><div class="blog-slider__text">Windows下编译Azerothcore源码</div><a class="blog-slider__button" href="41cd9b5d/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="a4f453ce/cover.jpg" alt="a4f453ce/cover.jpg"/></div><div class="blog-slider__content"><span class="blog-slider__code">2022-02-23</span><a class="blog-slider__title" href="a4f453ce/">【穿越史诗】《耳语魔兽》角色扮演项目</a><div class="blog-slider__text">GSWXY的封笔之作，史诗项目</div><a class="blog-slider__button" href="a4f453ce/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="9cc7e1be/1.png" alt="9cc7e1be/1.png"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-09-10</span><a class="blog-slider__title" href="9cc7e1be/">GSWXY-单机服务端Docker版</a><div class="blog-slider__text">基于Docker的魔兽世界单机端</div><a class="blog-slider__button" href="9cc7e1be/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="22042029/cover.png" alt="22042029/cover.png"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-07-18</span><a class="blog-slider__title" href="22042029/">内网穿透之ZeroTier布设虚拟局域网</a><div class="blog-slider__text">教你怎么用zerotier来实现内网穿透</div><a class="blog-slider__button" href="22042029/">详情</a></div></div><div class="blog-slider__item swiper-slide" style="width: 750px; opacity: 1; transform: translate3d(0px, 0px, 0px); transition-duration: 0ms"><div class="blog-slider__img"><img src="3a49f122/cover.jpg" alt="3a49f122/cover.jpg"/></div><div class="blog-slider__content"><span class="blog-slider__code">2021-07-17</span><a class="blog-slider__title" href="3a49f122/">内网穿透介绍及FRP部署</a><div class="blog-slider__text">教你怎么用frp来实现内网穿透</div><a class="blog-slider__button" href="3a49f122/">详情</a></div></div></div><div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div></div></div>';
+    console.log('已挂载swiper')
+    parent.insertAdjacentHTML("afterbegin",child)}
+     </script>
+<script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-swiper/swiper/swiper.min.js"></script>
+<script data-pjax src="https://cdn.jsdelivr.net/gh/Zfour/Butterfly-swiper@0.18/swiper/swiperindex.js"></script>
+<style></style><!-- hexo injector body_end end --></body></html>
